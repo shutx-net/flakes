@@ -1,0 +1,57 @@
+# Keeps the collection installable. A flake that no longer evaluates, or a shell whose
+# packages vanished from nixpkgs, otherwise only surfaces at `nix develop` time for
+# whoever pulled it.
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    strategy:
+      fail-fast: false
+      matrix:
+        # macOS is worth running: on aarch64-darwin jdk25 resolves to a prebuilt
+        # zulu-ca-jdk that is already in cache.nixos.org, so nothing builds from source.
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      # Evaluation only, but across every system the flake declares. The build step below
+      # can only ever cover the platform it happens to be running on.
+      - name: Evaluate all outputs, all systems
+        run: nix flake check --all-systems
+
+      # Discovered rather than listed, so a new projects/<name>/ is covered the moment it
+      # is committed. Attribute names never contain spaces, so word splitting is fine.
+      - name: Build every dev shell for this runner
+        run: |
+          system=$(nix eval --impure --raw --expr builtins.currentSystem)
+          for shell in $(nix flake show --json | jq -r --arg s "$system" '.devShells[$s] | keys[]'); do
+            echo "::group::$shell"
+            nix develop ".#$shell" --command true
+            echo "::endgroup::"
+          done
+
+      - name: Formatting is clean
+        if: runner.os == 'Linux'
+        run: |
+          nix fmt
+          git diff --exit-code
