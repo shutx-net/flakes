@@ -7,6 +7,11 @@
     # channels.nixos.org redirects to an immutable releases.nixos.org snapshot, so the lock
     # file still pins one exact nixpkgs revision.
     nixpkgs.url = "https://channels.nixos.org/nixos-26.05/nixexprs.tar.xz";
+
+    # Only for projects whose default branch builds against libraries newer than the stable
+    # release carries -- projects/plasma-desktop needs KDE Frameworks and Plasma releases
+    # that nixos-26.05 will never get. Everything else stays on the stable pin above.
+    nixpkgs-unstable.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
   };
 
   outputs =
