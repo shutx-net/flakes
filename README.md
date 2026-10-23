@@ -29,6 +29,8 @@ nix develop <flakes>#spring-security
 | --- | --- | --- |
 | `#spring-security` | [spring-projects/spring-security](https://github.com/spring-projects/spring-security) |  |
 | `#spring-security-toolchains` | same | for `-PtestToolchain` |
+| `#plasma-desktop` | [KDE/plasma-desktop](https://invent.kde.org/plasma/plasma-desktop) | Linux only; from nixos-unstable |
+| `#plasma-desktop-clang-tools` | same | adds clang-format and clangd |
 
 See each `projects/<name>/README.md` for details.
 
@@ -37,7 +39,8 @@ See each `projects/<name>/README.md` for details.
 ```
 flakes/
 ├── flake.nix                       # the only entry point
-├── flake.lock                      # pins nixpkgs to one revision, shared by every project
+├── flake.lock                      # pins nixos-26.05, shared by every project, and
+│                                   # nixos-unstable, for the few that need newer libraries
 └── projects/
     └── <project>/
         ├── shells.nix              # { pkgs, system, inputs, ... } -> { <variant> = devShell; }
