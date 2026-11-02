@@ -10,7 +10,9 @@
 
     # Only for projects whose default branch builds against libraries newer than the stable
     # release carries -- projects/plasma-desktop needs KDE Frameworks and Plasma releases
-    # that nixos-26.05 will never get. Everything else stays on the stable pin above.
+    # that nixos-26.05 will never get -- and for single tools upstream CI runs at `latest`
+    # that the stable release has fallen behind on (projects/caddy's golangci-lint).
+    # Everything else stays on the stable pin above.
     nixpkgs-unstable.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
   };
 
