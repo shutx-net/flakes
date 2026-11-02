@@ -31,6 +31,7 @@ nix develop <flakes>#spring-security
 | `#spring-security-toolchains` | same | for `-PtestToolchain` |
 | `#plasma-desktop` | [plasma/plasma-desktop](https://invent.kde.org/plasma/plasma-desktop) | Linux only; from nixos-unstable |
 | `#plasma-desktop-clang-tools` | same | adds clang-format and clangd |
+| `#caddy` | [caddyserver/caddy](https://github.com/caddyserver/caddy) | golangci-lint from nixos-unstable |
 
 See each `projects/<name>/README.md` for details.
 
@@ -40,7 +41,7 @@ See each `projects/<name>/README.md` for details.
 flakes/
 ├── flake.nix                       # the only entry point
 ├── flake.lock                      # pins nixos-26.05, shared by every project, and
-│                                   # nixos-unstable, for the few that need newer libraries
+│                                   # nixos-unstable, for the few that need newer packages
 └── projects/
     └── <project>/
         ├── shells.nix              # { pkgs, system, inputs, ... } -> { <variant> = devShell; }
